@@ -1,7 +1,7 @@
 package worldObjects;
 
 // Alternate version of entity that is not affected by gravity.
-// Currently deprecated.
+// Currently deprecated. Could return in future versions.
 public class staticEntity extends entity {
     int id = 0;
 	private double mass;

@@ -10,12 +10,17 @@ import java.util.Arrays;
 	This makes it far easier to make the map portable.
 */
 
-public abstract class map 
+public abstract class map
 {
 	protected int[] size;
 	protected containerObject[][] objectMap;
 	protected ArrayList<containerObject> entityReferenceList = new ArrayList<containerObject>();
 
+	/**
+	 * Constructs a map of given size
+	 * @param v_size The map's vertical size
+	 * @param h_size The map's horizontal size
+	 */
 	public map(int v_size, int h_size)
 	{
 		this.size = new int[] {v_size, h_size};
@@ -24,12 +29,29 @@ public abstract class map
 			Arrays.fill(this.objectMap[i], new containerObject(null, " "));
 	}
 
-	// Returns the dimensions of the map
+	/**
+	 * Returns the size of the map
+	 * @return The map's size
+	 */
 	public int[] getSize() { return this.size; }
+
+	/**
+	 * Returns a single object from the map
+	 * @param y The object's y
+	 * @param x The object's x
+	 * @return The object found at the coordinates
+	 */
 	public containerObject getObject(int y, int x) { return objectMap[y][x]; }
+
+	/**
+	 * Returns an entire list of the entities contained in the universe
+	 * @return The entity list
+	 */
 	public ArrayList<containerObject> getEntityReferenceList() {return this.entityReferenceList;}
 
-	// Converts the map to a printable string.
+	/**
+	 * Returns a string of the map
+	 */
 	public String toString()
 	{
 		String returnString = "/-";
@@ -47,23 +69,34 @@ public abstract class map
 		returnString += "\\";
 		for (int i=0; i < this.size[1]; i++)
 			returnString += "--";
-		returnString += "-/\n";
+		returnString += "-/";
 		return returnString;
 	}
 
-	// Should only be used as a helper method.
-	public void updateEntityList(containerObject newEntity)
+	/**
+	 * Adds a new entity to the list
+	 * @param newEntity
+	 */
+	protected void updateEntityList(containerObject newEntity)
 	{
 		this.entityReferenceList.add(newEntity);
 	}
 
-	// Should only be used as a helper method.
-	public void removeEntityFromList(containerObject oldEntity)
+	/**
+	 * Removes a known entity from the list
+	 * @param oldEntity
+	 */
+	protected void removeEntityFromList(containerObject oldEntity)
 	{
 		this.entityReferenceList.remove(oldEntity);
 	}
 
-	// Randomly places a given object and symbol across the map
+	/**
+	 * Places new objects on the map
+	 * @param percentChance Roughly the percentage of objects the map will contain
+	 * @param representedObject The object to populate the map with
+	 * @param symbol The symbol of the objects populating the map
+	 */
 	public void populate(double percentChance, Object representedObject, String symbol)
 	{
 		containerObject placeholder;
@@ -78,7 +111,9 @@ public abstract class map
 					}
 	}
 
-	// Replaces the universe with empty container objects.
+	/**
+	 * Removes all entities from the map
+	 */
 	public void empty()
 	{
 		for (int y=0; y<this.size[0]; y++)
@@ -87,7 +122,13 @@ public abstract class map
 		this.entityReferenceList = new ArrayList<containerObject>();
 	}
 
-	// Replaces an object at a given coordinate with a new object
+	/**
+	 * Places a single object into the map
+	 * @param y The object's y coordinate
+	 * @param x The object's x coordinate
+	 * @param representedObject The object
+	 * @param symbol The object's symbol
+	 */
 	public void placeObject(int y, int x, Object representedObject, String symbol)
 	{
 		containerObject obj = new containerObject(representedObject, symbol, new int[] {y, x});
@@ -95,12 +136,20 @@ public abstract class map
 		this.updateEntityList(obj);
 	}
 
-	// Pushes an object and recursively push objects that it collides directly with.
-	public void pushObject(int y, int x, Object object)
+	/**
+	 * Pushes an object a set distance.
+	 * If the edge of the universe is reached, it loops around, making a sort of spherical universe
+	 * When colliding with another object, it pushes that object half the distance it was.
+	 * @param y The object's y shift
+	 * @param x The object's x shift
+	 * @param object The object
+	 */
+	public int pushObject(int y, int x, Object object)
 	{
-		if (y == 0 && x == 0) return;
+		int condition = 0;
+		if (y == 0 && x == 0) return 0;
 		int[] objectLoc = findObject(object);
-		if (objectLoc == null) return;
+		if (objectLoc == null) return 0;
 		int yLoc = objectLoc[0]+y;
 		int xLoc = objectLoc[1]+x;
 
@@ -109,15 +158,63 @@ public abstract class map
 		while (yLoc < 0) yLoc += size[0]-1;
 		while (xLoc < 0) xLoc += size[1]-1;
 
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() == object) return;
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() != null) pushObject(y, x, this.objectMap[yLoc][xLoc].getRepresentedObject());
+		if (this.objectMap[yLoc][xLoc].getRepresentedObject() == object) return 0;
+		if (this.objectMap[yLoc][xLoc].getRepresentedObject() != null)
+		{ condition = pushObject_(y/2, x/2, this.objectMap[yLoc][xLoc].getRepresentedObject(), 0); }
+		if (condition == 1) 
+		{
+			return 0;
+		}
 
 		containerObject temp = this.objectMap[objectLoc[0]][objectLoc[1]];
 		this.objectMap[objectLoc[0]][objectLoc[1]] = new containerObject(null, " ");
 		this.objectMap[yLoc][xLoc] = temp;
+		return 0;
 	}
 
-	// Finds a given object and returns its coordinates
+	/**
+	 * Helper method for recursive pushing. Helps to prevent stack overflow errors.
+	 * @param y Vertical shift
+	 * @param x Horizontal shift
+	 * @param object Object to shift
+	 * @param loop Iterator
+	 */
+	private int pushObject_(int y, int x, Object object, int loop)
+	{
+		int condition = 0;
+
+		if (y == 0 && x == 0) return 1;
+		int[] objectLoc = findObject(object);
+		if (objectLoc == null) return 1;
+		int yLoc = objectLoc[0]+y;
+		int xLoc = objectLoc[1]+x;
+
+		while (yLoc > size[0]-1) yLoc -= size[0]-1;
+		while (xLoc > size[1]-1) xLoc -= size[1]-1;
+		while (yLoc < 0) yLoc += size[0]-1;
+		while (xLoc < 0) xLoc += size[1]-1;
+
+		if (this.objectMap[yLoc][xLoc].getRepresentedObject() == object) return 1;
+		if (this.objectMap[yLoc][xLoc].getRepresentedObject() != null && loop <= 2*this.size[0]) 
+		{
+			condition = pushObject_(y/2, x/2, this.objectMap[yLoc][xLoc].getRepresentedObject(), loop+1);
+		}
+		if (loop >= 2*this.size[0] || condition == 1)
+		{
+			return 1;
+		}
+
+		containerObject temp = this.objectMap[objectLoc[0]][objectLoc[1]];
+		this.objectMap[objectLoc[0]][objectLoc[1]] = new containerObject(null, " ");
+		this.objectMap[yLoc][xLoc] = temp;
+		return 0;
+	}
+
+	/**
+	 * Finds the coordinates of an object
+	 * @param lostObject the object trying to be found
+	 * @return The object's coordinates
+	 */
 	public int[] findObject(Object lostObject)
 	{
 		for (int y=0; y<this.size[0]; y++)

@@ -7,23 +7,18 @@ package worldObjects;
 */
 
 public class entity {
-
-	/*------------------*\
-	  INSTANCE VARIABLES
-	\*------------------*/
-
 	private int id = 0;
-	private double mass;
+	private double mass = 0;
 
 	private double angle = 0;
 	private double speed = 0;
 
 	private double lightSpeed = Math.sqrt(3);
 
-	/*------------*\
-	  CONSTRUCTORS
-	\*------------*/
-
+	/**
+	 * Constructs a new object with a given mass and default parameters
+	 * @param mass The object's mass
+	 */
 	public entity(double mass)
 	{
 		this.mass = mass;
@@ -31,6 +26,13 @@ public class entity {
 		this.fix();
 	}
 
+	/**
+	 * Constructs a new object with all parameters given
+	 * @param mass The object's mass
+	 * @param angle The object's initial angle
+	 * @param speed The object's initial speed
+	 * @param ls The light speed of the object
+	 */
 	public entity(double mass, double angle, double speed, double ls)
 	{
 		this.mass = mass;
@@ -42,30 +44,61 @@ public class entity {
 		this.fix();
 	}
 
-	/*---------*\
-	  ACCESSORS
-	\*---------*/
-
+	/**
+	 * Returns the arbitrary ID of the object
+	 * @return
+	 */
 	public int getId() { return this.id; }
+
+	/**
+	 * Returns the mass of the object
+	 * @return
+	 */
 	public double getMass() { return this.mass; }
+
+	/**
+	 * Returns the object's current speed
+	 * @return
+	 */
 	public double getSpeed() { return this.speed; }
+
+	/**
+	 * Returns the object's current angle
+	 * @return
+	 */
 	public double getAngle() { return this.angle; }
+
+	/**
+	 * Returns the maximum speed of the object
+	 * @return
+	 */
 	public double getLS() { return this.lightSpeed; }
 
-	// Translates the variables of an entity for simpler debugging
+	/**
+	 * Translates all instance variables to a string
+	 */
 	public String toString()
 	{
 		return "ID: " + id + "\nMass: " + mass + " Kg\nAngle: " + angle + " radians\nSpeed: " + speed;
 	}
 
-	/*---------*\
-	  MODIFIERS
-	\*---------*/
-
+	/**
+	 * Changes the object's maximum speed
+	 * @param ls
+	 */
 	public void setLS(double ls) { this.lightSpeed = ls; }
+
+	/**
+	 * Adds a given mass to the object
+	 * @param mass
+	 */
 	public void addMass(double mass) { this.mass += mass; }
 
-	// Keeps angles positive and within the area of a circle, keeps speeds reasonable
+	/**
+	 * Changes values to be useable for other methods
+	 * Angle is kept positive,
+	 * The speed is kept within the bounds of lightSpeed
+	 */
 	public void fix()
 	{
 		double pi = Math.PI;
@@ -75,7 +108,13 @@ public class entity {
 		if (this.speed < -this.lightSpeed) this.speed = -this.lightSpeed;
 	}
 
-	// Gently adjusts the angle and speed of a singularity to simulate the gentle affect of gravity
+	/**
+	 * Nudges the angle and speed of the object towards a given vector.
+	 * Accounts for gravity for the purposes of the simulator
+	 * @param angle Angle of the vector
+	 * @param speed Speed of the vector
+	 * @param r Distance away from the object
+	 */
 	public void accelerate(double angle, double speed, double r)
 	{
 		double pi = Math.PI;
@@ -89,7 +128,7 @@ public class entity {
 			this.speed -= speed;
 		else
 			this.speed += speed;
-		
+
 		// Subtract the smaller angle from the greater angle, divide that by r^2, and adjust accordingly.
 		if (this.angle > angle)
 			// Adjusts angle towards the right.
@@ -101,7 +140,11 @@ public class entity {
 		this.fix();
 	}
 
-	// Screw being gentle, just change everything to a specific value.
+	/**
+	 * If a gentle acceleration is not your boat, try just changing the values abruptly.
+	 * @param angle The new angle
+	 * @param speed The new speed
+	 */
 	public void changeVelocity(double angle, double speed)
 	{
 		this.angle = angle;
