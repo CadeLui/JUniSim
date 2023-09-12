@@ -72,8 +72,9 @@ public class UserInterface
 		inputProtector("int", "Height of Universe: "); int h = sc.nextInt();
 		inputProtector("int", "Width of Universe: "); int w = sc.nextInt();
 		inputProtector("double", "Gravitational Constant: "); double g = sc.nextDouble();
+		inputProtector("double", "Distance Multiplier: "); double mul = sc.nextDouble();
 		inputProtector("double", "Light Speed: "); ls = sc.nextDouble();
-		uni = new universe(h, w, g);
+		uni = new universe(h, w, g, mul);
 	}
 
 	/**

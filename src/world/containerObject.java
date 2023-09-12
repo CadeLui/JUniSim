@@ -9,7 +9,7 @@ public class containerObject
 {
 	protected Object representedObject;
 	protected String symbol;
-	protected int[] location = new int[2];
+	protected double[] location = new double[2];
 
 	/**
 	 * Constructs an object with a given location
@@ -17,10 +17,10 @@ public class containerObject
 	 * @param symbol
 	 * @param location
 	 */
-	public containerObject(Object representedObject, String symbol, int[] location)
+	public containerObject(Object representedObject, String symbol, double[] location)
 	{
 		this.representedObject = representedObject;
-		this.symbol = symbol.substring(0, 1);
+		this.symbol = symbol;
 		this.location = location;
 	}
 
@@ -32,21 +32,21 @@ public class containerObject
 	public containerObject(Object representedObject, String symbol)
 	{
 		this.representedObject = representedObject;
-		this.symbol = symbol.substring(0, 1);
-		this.location = new int[]{-1, -1};
+		this.symbol = symbol;
+		this.location = new double[]{-1, -1};
 	}
 
 	/**
 	 * Sets the location of the object
 	 * @param location
 	 */
-	public void setLocation(int[] location) { this.location = location; }
+	public void setLocation(double[] location) { this.location = location; }
 
 	/**
 	 * Returns the location of the object
 	 * @return
 	 */
-	public int[] getLocation() { return location; }
+	public double[] getLocation() { return location; }
 
 	/**
 	 * Returns the object's symbol

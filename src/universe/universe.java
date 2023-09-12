@@ -7,6 +7,9 @@ import worldObjects.entity;
 public class universe extends map 
 {
 	private double G;
+	private double distanceMultiplier;
+	private String[] colors = new String[] {"\u001B[31m", "\u001B[32m", "\u001B[33m", "\u001B[34m", "\u001B[35m", "\u001B[36m", "\u001B[37m"};
+	private String colorReset = "\u001B[0m";
 
 	/**
 	 * Defines a universe with an automatically generated gravitational constant
@@ -25,10 +28,11 @@ public class universe extends map
 	 * @param h_size The horizontal size of the universe
 	 * @param G A user-defined gravitational constant
 	 */
-	public universe(int v_size, int h_size, double G)
+	public universe(int v_size, int h_size, double G, double mult)
 	{
 		super(v_size, h_size);
 		this.G = G;
+		this.distanceMultiplier = mult;
 	}
 
 	/**
@@ -38,10 +42,22 @@ public class universe extends map
 	public void setG(double g) { G = g; }
 
 	/**
+	 * Changes how much space one block represents in meters
+	 * @param mult the new distance multiplier
+	 */
+	public void setDistanceMultiplier(double mult) { distanceMultiplier = mult; }
+
+	/**
 	 * Returns the universe's gravitational constant
 	 * @return The gravitational constant
 	 */
 	public double getG() {return G;}
+
+	/**
+	 * Returns the universe's distance multiplier
+	 * @return The distance multiplier
+	 */
+	public double getDistanceMultiplier() { return distanceMultiplier; }
 
 	/**
 	 * Generates an arbitrary id for the universe
@@ -71,7 +87,7 @@ public class universe extends map
 				if (Math.random() < percentChance)
 					if (this.objectMap[y][x].getRepresentedObject() == null)
 					{
-						containerObject placeholder = new containerObject(new entity(mass, angle, speed, ls), symbol, new int[] {y, x});
+						containerObject placeholder = new containerObject(new entity(mass, angle, speed, ls), colors[(int) (Math.random() * colors.length)] + symbol + colorReset, new double[] {y, x});
 						this.objectMap[y][x] = placeholder;
 						this.updateEntityList(placeholder);
 					}
@@ -94,7 +110,7 @@ public class universe extends map
 				if (Math.random() < percentChance)
 					if (this.objectMap[y][x].getRepresentedObject() == null)
 					{
-						containerObject placeholder = new containerObject(new entity(mass, 2*Math.PI * Math.random(), speed, ls), symbol, new int[] {y, x});
+						containerObject placeholder = new containerObject(new entity(mass, 2*Math.PI * Math.random(), speed, ls), colors[(int) (Math.random() * colors.length)] + symbol + colorReset, new double[] {y, x});
 						this.objectMap[y][x] = placeholder;
 						this.updateEntityList(placeholder);
 					}
@@ -126,7 +142,7 @@ public class universe extends map
 				if (Math.random() < percentChance)
 					if (this.objectMap[y][x].getRepresentedObject() == null)
 					{
-						containerObject newEntity = new containerObject(new entity(mass, angle, speed, ls), symbol, new int[] {y, x});
+						containerObject newEntity = new containerObject(new entity(mass, angle, speed, ls), colors[(int) (Math.random() * colors.length)] + symbol + colorReset, new double[] {y, x});
 						this.objectMap[y][x] = newEntity;
 						this.updateEntityList(newEntity);
 					}
@@ -157,7 +173,7 @@ public class universe extends map
 				if (Math.random() < percentChance)
 					if (this.objectMap[y][x].getRepresentedObject() == null)
 					{
-						containerObject placeholder = new containerObject(new entity(mass, 2*Math.PI * Math.random(), speed, ls), symbol, new int[] {y, x});
+						containerObject placeholder = new containerObject(new entity(mass, 2*Math.PI * Math.random(), speed, ls), colors[(int) (Math.random() * colors.length)] + symbol + colorReset, new double[] {y, x});
 						this.objectMap[y][x] = placeholder;
 						this.updateEntityList(placeholder);
 					}
@@ -250,7 +266,7 @@ public class universe extends map
 		int[] e2Loc = findObject(e2);
 
 		double massProduct = e1.getMass() * e2.getMass();
-		double distance = Math.pow(universe.distanceBetweenPoints(e1Loc, e2Loc), 2);
+		double distance = Math.pow(universe.distanceBetweenPoints(e1Loc, e2Loc), 2) * distanceMultiplier;
 		return (G*massProduct/distance);
 	}
 	

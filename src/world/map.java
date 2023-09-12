@@ -105,7 +105,7 @@ public abstract class map
 				if (Math.random() < percentChance)
 					if (this.objectMap[r][c].getRepresentedObject() == null)
 					{
-						placeholder = new containerObject(representedObject, symbol, new int[] {r, c});
+						placeholder = new containerObject(representedObject, symbol, new double[] {r, c});
 						this.objectMap[r][c] = placeholder;
 						this.updateEntityList(placeholder);
 					}
@@ -131,7 +131,7 @@ public abstract class map
 	 */
 	public void placeObject(int y, int x, Object representedObject, String symbol)
 	{
-		containerObject obj = new containerObject(representedObject, symbol, new int[] {y, x});
+		containerObject obj = new containerObject(representedObject, symbol, new double[] {y, x});
 		this.objectMap[y][x] = obj;
 		this.updateEntityList(obj);
 	}
@@ -144,23 +144,23 @@ public abstract class map
 	 * @param x The object's x shift
 	 * @param object The object
 	 */
-	public int pushObject(int y, int x, Object object)
+	public int pushObject(double y, double x, Object object)
 	{
 		int condition = 0;
 		if (y == 0 && x == 0) return 0;
 		int[] objectLoc = findObject(object);
 		if (objectLoc == null) return 0;
-		int yLoc = objectLoc[0]+y;
-		int xLoc = objectLoc[1]+x;
+		double yLoc = objectLoc[0]+y;
+		double xLoc = objectLoc[1]+x;
 
 		while (yLoc > size[0]-1) yLoc -= size[0]-1;
 		while (xLoc > size[1]-1) xLoc -= size[1]-1;
 		while (yLoc < 0) yLoc += size[0]-1;
 		while (xLoc < 0) xLoc += size[1]-1;
 
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() == object) return 0;
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() != null)
-		{ condition = pushObject_(y/2, x/2, this.objectMap[yLoc][xLoc].getRepresentedObject(), 0); }
+		if (this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject() == object) return 0;
+		if (this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject() != null)
+		{ condition = pushObject_(y*0.1, x*0.1, this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject(), 0); }
 		if (condition == 1) 
 		{
 			return 0;
@@ -168,7 +168,7 @@ public abstract class map
 
 		containerObject temp = this.objectMap[objectLoc[0]][objectLoc[1]];
 		this.objectMap[objectLoc[0]][objectLoc[1]] = new containerObject(null, " ");
-		this.objectMap[yLoc][xLoc] = temp;
+		this.objectMap[(int)yLoc][(int)xLoc] = temp;
 		return 0;
 	}
 
@@ -179,25 +179,25 @@ public abstract class map
 	 * @param object Object to shift
 	 * @param loop Iterator
 	 */
-	private int pushObject_(int y, int x, Object object, int loop)
+	private int pushObject_(double y, double x, Object object, int loop)
 	{
 		int condition = 0;
 
 		if (y == 0 && x == 0) return 1;
 		int[] objectLoc = findObject(object);
 		if (objectLoc == null) return 1;
-		int yLoc = objectLoc[0]+y;
-		int xLoc = objectLoc[1]+x;
+		double yLoc = objectLoc[0]+y;
+		double xLoc = objectLoc[1]+x;
 
 		while (yLoc > size[0]-1) yLoc -= size[0]-1;
 		while (xLoc > size[1]-1) xLoc -= size[1]-1;
 		while (yLoc < 0) yLoc += size[0]-1;
 		while (xLoc < 0) xLoc += size[1]-1;
 
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() == object) return 1;
-		if (this.objectMap[yLoc][xLoc].getRepresentedObject() != null && loop <= 2*this.size[0]) 
+		if (this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject() == object) return 1;
+		if (this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject() != null && loop <= 2*this.size[0]) 
 		{
-			condition = pushObject_(y/2, x/2, this.objectMap[yLoc][xLoc].getRepresentedObject(), loop+1);
+			condition = pushObject_(y*0.1, x*0.1, this.objectMap[(int)yLoc][(int)xLoc].getRepresentedObject(), loop+1);
 		}
 		if (loop >= 2*this.size[0] || condition == 1)
 		{
@@ -206,7 +206,7 @@ public abstract class map
 
 		containerObject temp = this.objectMap[objectLoc[0]][objectLoc[1]];
 		this.objectMap[objectLoc[0]][objectLoc[1]] = new containerObject(null, " ");
-		this.objectMap[yLoc][xLoc] = temp;
+		this.objectMap[(int)yLoc][(int)xLoc] = temp;
 		return 0;
 	}
 

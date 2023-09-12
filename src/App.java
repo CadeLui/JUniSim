@@ -21,7 +21,7 @@ public class App {
 	 */
     public static void manualTesting()
     {
-        universe uni = new universe(10, 10, 0.001);
+        universe uni = new universe(10, 10, 0.001, 1);
         entity s1 = new entity(1000, 0, 0, 3);
         entity s2 = new entity(1000, 0, 0, 3);
         uni.placeObject(0, 0, s1, "1");
