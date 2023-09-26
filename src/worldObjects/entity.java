@@ -132,10 +132,10 @@ public class entity {
 		// Subtract the smaller angle from the greater angle, divide that by r^2, and adjust accordingly.
 		if (this.angle > angle)
 			// Adjusts angle towards the right.
-			this.angle = this.angle - ((this.angle-angle)/(r*r));
+			this.angle = this.angle - (Math.abs(angle-this.angle)/(r*r));
 		else
 			// Adjusts angle towards the left.
-			this.angle = this.angle + ((angle-this.angle)/(r*r));
+			this.angle = this.angle + (Math.abs(angle-this.angle)/(r*r));
 
 		this.fix();
 	}

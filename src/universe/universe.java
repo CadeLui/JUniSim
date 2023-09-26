@@ -341,7 +341,7 @@ public class universe extends map
 				if (entityReferenceList.get(i2) == entityReferenceList.get(i)) continue;
 				entity pal = (entity) entityReferenceList.get(i2).getRepresentedObject();
 				double distance = distanceBetweenPoints(findObject(guy), findObject(pal));
-				guy.accelerate(getAngleBetweenObjects(guy, pal), getGravityBetweenObjects(guy, pal)/guy.getMass(), distance);
+				guy.accelerate(getAngleBetweenObjects(guy, pal)- guy.getAngle(), getGravityBetweenObjects(guy, pal), distance);
 			}
 			if (pullOrPush == "pull")
 				i -= this.pullObject((int) (guy.getSpeed()*Math.sin(guy.getAngle())), (int) (guy.getSpeed()*Math.cos(guy.getAngle())), guy);
